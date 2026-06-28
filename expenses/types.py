@@ -1,9 +1,10 @@
-from pydantic import BaseModel, Field, EmailStr, field_validator
 from typing import Optional
+
+from pydantic import BaseModel, EmailStr, Field, field_validator
 
 
 class RegisterRequest(BaseModel):
-    username: str = Field(..., min_length=3, max_length=50, pattern=r'^[a-zA-Z0-9_-]+$')
+    username: str = Field(..., min_length=3, max_length=50, pattern=r"^[a-zA-Z0-9_-]+$")
     password: str = Field(..., min_length=6, max_length=128)
     email: Optional[EmailStr] = None
 
@@ -12,7 +13,7 @@ class RegisterRequest(BaseModel):
             "example": {
                 "username": "john_doe",
                 "password": "securepass123",
-                "email": "john@example.com"
+                "email": "john@example.com",
             }
         }
 
@@ -22,12 +23,7 @@ class LoginRequest(BaseModel):
     password: str = Field(..., min_length=1)
 
     class Config:
-        json_schema_extra = {
-            "example": {
-                "username": "john_doe",
-                "password": "securepass123"
-            }
-        }
+        json_schema_extra = {"example": {"username": "john_doe", "password": "securepass123"}}
 
 
 class ExpenseRequest(BaseModel):
@@ -35,20 +31,16 @@ class ExpenseRequest(BaseModel):
     amount: float = Field(..., gt=0, le=1000000)
     category: str = Field(default="Other", max_length=50)
 
-    @field_validator('amount')
+    @field_validator("amount")
     @classmethod
     def amount_must_be_positive(cls, v):
         if v <= 0:
-            raise ValueError('Amount must be greater than 0')
+            raise ValueError("Amount must be greater than 0")
         return v
 
     class Config:
         json_schema_extra = {
-            "example": {
-                "description": "Lunch at restaurant",
-                "amount": 25.50,
-                "category": "Food"
-            }
+            "example": {"description": "Lunch at restaurant", "amount": 25.50, "category": "Food"}
         }
 
 
@@ -57,20 +49,16 @@ class ExpenseUpdateRequest(BaseModel):
     amount: Optional[float] = Field(None, gt=0, le=1000000)
     category: Optional[str] = Field(None, max_length=50)
 
-    @field_validator('amount')
+    @field_validator("amount")
     @classmethod
     def amount_must_be_positive(cls, v):
         if v is not None and v <= 0:
-            raise ValueError('Amount must be greater than 0')
+            raise ValueError("Amount must be greater than 0")
         return v
 
     class Config:
         json_schema_extra = {
-            "example": {
-                "description": "Updated description",
-                "amount": 30.00,
-                "category": "Dining"
-            }
+            "example": {"description": "Updated description", "amount": 30.00, "category": "Dining"}
         }
 
 

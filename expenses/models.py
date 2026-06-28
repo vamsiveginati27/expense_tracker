@@ -1,6 +1,7 @@
-from mongoengine import Document, StringField, FloatField, DateTimeField, ReferenceField
 from datetime import datetime
-from werkzeug.security import generate_password_hash, check_password_hash
+
+from mongoengine import DateTimeField, Document, FloatField, ReferenceField, StringField
+from werkzeug.security import check_password_hash, generate_password_hash
 
 
 class User(Document):
@@ -9,10 +10,7 @@ class User(Document):
     email = StringField()
     created_at = DateTimeField(default=datetime.utcnow)
 
-    meta = {
-        'collection': 'users',
-        'indexes': ['username']
-    }
+    meta = {"collection": "users", "indexes": ["username"]}
 
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
@@ -22,10 +20,10 @@ class User(Document):
 
     def to_dict(self):
         return {
-            'id': str(self.id),
-            'username': self.username,
-            'email': self.email,
-            'created_at': self.created_at.isoformat()
+            "id": str(self.id),
+            "username": self.username,
+            "email": self.email,
+            "created_at": self.created_at.isoformat(),
         }
 
 
@@ -33,25 +31,25 @@ class Expense(Document):
     user = ReferenceField(User, required=True)
     description = StringField(required=True, max_length=200)
     amount = FloatField(required=True, min_value=0)
-    category = StringField(default='Other', max_length=50)
+    category = StringField(default="Other", max_length=50)
     date = DateTimeField(default=datetime.utcnow)
     created_at = DateTimeField(default=datetime.utcnow)
 
     meta = {
-        'collection': 'expenses',
-        'indexes': ['user', 'category', 'date'],
-        'ordering': ['-date']
+        "collection": "expenses",
+        "indexes": ["user", "category", "date"],
+        "ordering": ["-date"],
     }
 
     def to_dict(self):
         return {
-            'id': str(self.id),
-            'user': str(self.user.id),
-            'description': self.description,
-            'amount': self.amount,
-            'category': self.category,
-            'date': self.date.isoformat(),
-            'created_at': self.created_at.isoformat()
+            "id": str(self.id),
+            "user": str(self.user.id),
+            "description": self.description,
+            "amount": self.amount,
+            "category": self.category,
+            "date": self.date.isoformat(),
+            "created_at": self.created_at.isoformat(),
         }
 
     @classmethod
@@ -61,8 +59,8 @@ class Expense(Document):
     @classmethod
     def get_summary_by_category(cls, user):
         pipeline = [
-            {'$match': {'user': user.id}},
-            {'$group': {'_id': '$category', 'total': {'$sum': '$amount'}}},
-            {'$sort': {'total': -1}}
+            {"$match": {"user": user.id}},
+            {"$group": {"_id": "$category", "total": {"$sum": "$amount"}}},
+            {"$sort": {"total": -1}},
         ]
         return cls.objects.aggregate(pipeline)

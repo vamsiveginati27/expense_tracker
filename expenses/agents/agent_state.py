@@ -1,12 +1,14 @@
-from typing import TypedDict, Literal, Optional
 from dataclasses import dataclass, field
+from typing import Literal, Optional, TypedDict
+
 
 @dataclass
 class AgentState(TypedDict):
     """State of the agent."""
+
     messages: list[dict]
     current_user_id: str
-    selected_model: Literal['claude', 'openai', 'gemini', 'kimi']
+    selected_model: Literal["claude", "openai", "gemini", "kimi"]
     tool_calls: list[dict] = field(default_factory=list)
     last_error: Optional[str] = None
     step_count: int = 0
@@ -16,6 +18,7 @@ class AgentState(TypedDict):
 @dataclass
 class ToolResult:
     """Result of a tool call."""
+
     tool_name: str
     success: bool
     data: dict
@@ -25,6 +28,7 @@ class ToolResult:
 @dataclass
 class ToolCall:
     """Call to a tool."""
+
     tool_name: str
     args: dict
     result: ToolResult
